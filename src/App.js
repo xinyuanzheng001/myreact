@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import Map from './components/Map'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import Loader from './components/Loader'
+import Header from './components/Header'
 
 function App() {
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    const fetchItem = async () => {
+      setIsLoading(true)
+      const result = await axios('https://eonet.sci.gsfc.nasa.gov/api/v2.1/events')
+
+      setItems(result.data.events)
+      setIsLoading(false)
+    }
+    fetchItem()
+    
+  }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      { !isLoading ? <Map items={items}/> : <Loader />}
     </div>
+
   );
 }
 
